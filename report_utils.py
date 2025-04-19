@@ -16,7 +16,8 @@ criteria_titles = {
     "contextual_fit": "Контекстуальное соответствие"
 }
 
-def generate_pdf_from_json(json_data: dict, author: str, start_date: datetime, end_date: datetime, filename: str = "code_review_report.pdf"):
+def generate_pdf_from_json(json_data: dict, author: str, repo: str, start_date: datetime, 
+                           end_date: datetime, filename: str = "code_review_report.pdf"):
     doc = SimpleDocTemplate(filename, pagesize=A4,
                             rightMargin=2 * cm, leftMargin=2 * cm,
                             topMargin=2 * cm, bottomMargin=2 * cm)
@@ -31,6 +32,7 @@ def generate_pdf_from_json(json_data: dict, author: str, start_date: datetime, e
 
     story.append(Paragraph("Отчёт о качестве кода", header_style))
     story.append(Paragraph(f"<b>Разработчик:</b> {author}", meta_style))
+    story.append(Paragraph(f"<b>Репозиторий:</b> {repo}", meta_style))
     story.append(Paragraph(f"<b>Период:</b> {start_date.strftime('%d.%m.%Y')} - {end_date.strftime('%d.%m.%Y')}", meta_style))
     story.append(Spacer(1, 0.5 * cm))
 

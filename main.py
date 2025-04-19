@@ -59,7 +59,7 @@ def main():
 
     os.makedirs(args.output_dir, exist_ok=True)
     output_pdf_path = os.path.join(args.output_dir, "report.pdf")
-    generate_pdf_from_json(parsed_json, args.author, start_date, end_date, output_pdf_path)
+    generate_pdf_from_json(parsed_json, args.author, args.repo, start_date, end_date, output_pdf_path)
 
 
 if __name__ == "__main__":
