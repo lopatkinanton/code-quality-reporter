@@ -1,0 +1,39 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+
+# Environments
+.env
+*.env
+
+# Editor folders
+.vscode/
+.idea/
+
+# Output and temp folders
+tmp/
+output/
+
+# Reports and docs
+*.pdf
+
+# Jupyter
+.ipynb_checkpoints
+
+# Python packaging
+*.egg-info/
+dist/
+build/
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# pip cache
+pip-wheel-metadata/
+__pypackages__/
