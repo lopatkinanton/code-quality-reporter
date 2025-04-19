@@ -16,7 +16,7 @@ def parse_arguments():
     parser.add_argument("--author", required=True, help="Author email")
     parser.add_argument("--start-date", required=True, help="Start date in YYYY-MM-DD format")
     parser.add_argument("--end-date", required=True, help="End date in YYYY-MM-DD format")
-    parser.add_argument("--output-dir", default="output", help="Output directory (default: ./output)")
+    parser.add_argument("--output-dir", default=".\output", help="Output directory (default: .\output)")
     return parser.parse_args()
 
 
@@ -28,6 +28,9 @@ def main():
         end_date = datetime.strptime(args.end_date, "%Y-%m-%d")
     except ValueError as e:
         print(f"Неверный формат даты: {e}")
+         
+    if '/' not in args.repo:
+        print("Неверный формат репозитория. Ожидается 'user/repo'.")
         return
 
     repo_owner, repo_name = args.repo.split('/')
@@ -53,7 +56,10 @@ def main():
 
     fixed_str = response.content.replace('\\n', '\n').replace('\\"', '"').replace('\\\\', '\\')
     parsed_json = json.loads(fixed_str)
-    generate_pdf_from_json(parsed_json, args.author, start_date, end_date)
+
+    os.makedirs(args.output_dir, exist_ok=True)
+    output_pdf_path = os.path.join(args.output_dir, "report.pdf")
+    generate_pdf_from_json(parsed_json, args.author, start_date, end_date, output_pdf_path)
 
 
 if __name__ == "__main__":

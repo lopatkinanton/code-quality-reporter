@@ -84,4 +84,4 @@ def generate_pdf_from_json(data: dict, author: str, start_date: datetime, end_da
         story.append(Spacer(1, 0.4 * cm))
 
     doc.build(story)
-    print(f"PDF успешно создан: {filename}")
+    print(f"Отчет сохранен: {filename}")
