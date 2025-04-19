@@ -41,14 +41,6 @@ GITHUB_TOKEN - для доступа к GitHub API
 OPENAI_API_KEY - для доступа к OpenAI API
 OPENAI_API_BASE - (если используется кастомный эндпоинт)
 
-
-Для тестирования решения можно воспользоваться этими ключами (скопируйте их в файл .env)
-
-```
-OPENAI_API_KEY="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"
-OPENAI_API_BASE="https://openrouter.ai/api/v1"
-```
-
 ## Запуск
 
 ```
