@@ -1,13 +1,14 @@
 import os
 import argparse
-from datetime import datetime
 import json
+from datetime import datetime
 
 from config import GITHUB_TOKEN, OPENAI_API_KEY, OPENAI_API_BASE
-from git_utils import clone_repo, collect_blames_to_file
-from llm_utils import run_code_review
-from report_utils import generate_pdf_from_json
+from git_utils import clone_github_repo, collect_blames_to_file
+from llm_utils import invoke_review_llm
+from report_utils import generate_pdf_report
 from prompts import BASE_PROMPT
+
 
 
 def parse_arguments():
@@ -28,17 +29,19 @@ def main():
         end_date = datetime.strptime(args.end_date, "%Y-%m-%d")
     except ValueError as e:
         print(f"Неверный формат даты: {e}")
+        return
          
-    if '/' not in args.repo:
+    try:
+        repo_owner, repo_name = args.repo.split('/')
+    except ValueError:
         print("Неверный формат репозитория. Ожидается 'user/repo'.")
         return
 
-    repo_owner, repo_name = args.repo.split('/')
     tmp_dir = os.path.abspath("./tmp")
     local_repo_path = os.path.join(tmp_dir, repo_name)
     author_code_file = os.path.join(tmp_dir, f"{args.author}.txt")
 
-    clone_repo(local_repo_path, repo_name, repo_owner, GITHUB_TOKEN)
+    clone_github_repo(local_repo_path, repo_name, repo_owner, GITHUB_TOKEN)
     collect_blames_to_file(local_repo_path, args.author, start_date, end_date, author_code_file)
 
     with open(author_code_file, 'r', encoding='utf-8') as file:
@@ -49,17 +52,13 @@ def main():
         code=code
     )
 
-    try:
-        response = run_code_review(prompt, OPENAI_API_KEY, OPENAI_API_BASE)
-    except Exception as e:
-        print(f"Ошибка во время запроса к LLM: {e}")
-
-    fixed_str = response.content.replace('\\n', '\n').replace('\\"', '"').replace('\\\\', '\\')
-    parsed_json = json.loads(fixed_str)
+    response = invoke_review_llm(prompt, OPENAI_API_KEY, OPENAI_API_BASE) 
+    cleaned_response = response.content.replace('\\n', '\n').replace('\\"', '"').replace('\\\\', '\\')
+    parsed_json = json.loads(cleaned_response)
 
     os.makedirs(args.output_dir, exist_ok=True)
     output_pdf_path = os.path.join(args.output_dir, "report.pdf")
-    generate_pdf_from_json(parsed_json, args.author, args.repo, start_date, end_date, output_pdf_path)
+    generate_pdf_report(parsed_json, args.author, args.repo, start_date, end_date, output_pdf_path)
 
 
 if __name__ == "__main__":
